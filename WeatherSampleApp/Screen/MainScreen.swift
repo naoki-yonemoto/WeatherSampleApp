@@ -17,49 +17,59 @@ import SwiftUI
 import SwiftUI
 
 
-struct ContentView: View {
-        
+struct MainScreen: View {
+    
+    @StateObject private var vm = MainScreenViewModel()
+
     let items = ["今日の天気", "明日の天気", "明後日の天気"]
     
     var body: some View {
         
-        ScrollView(content: {
-            //AndroidのLinerLayoutのようなもの(ComposeならColumn）
-            VStack(content: {
-                //TextView(自動改行つき）
-                Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-                //Compose modifierみたいに設定する
-                    .padding(.top, 8)
-                    .font(.system(size: 24))
-                    .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
-                           alignment: .leading)
+        if !vm.isLoading {
+            ScrollView(content: {
+                //AndroidのLinerLayoutのようなもの(ComposeならColumn）
+                VStack(content: {
+                    //TextView(自動改行つき）
+                    Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+                    //Compose modifierみたいに設定する
+                        .padding(.top, 8)
+                        .font(.system(size: 24))
+                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
+                               alignment: .leading)
+                    
+                    Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+                        .padding(.top, 8)
+                        .font(.system(size: 16))
+                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
+                               alignment: .leading)
+                    
+                    Text("Hello, World!")
+                        .padding(.top, 8)
+                        .font(.system(size: 16))
+                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
+                               alignment: .leading)
+                    
+                    
+                    ForEach(items, id: \.self){ item in
+                        createListItems(for: item)
+                    }
+                })
+                .padding(.horizontal, 16)
                 
-                Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-                    .padding(.top, 8)
-                    .font(.system(size: 16))
-                    .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
-                           alignment: .leading)
                 
-                Text("Hello, World!")
-                    .padding(.top, 8)
-                    .font(.system(size: 16))
-                    .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
-                           alignment: .leading)
-                
-                
-                ForEach(items, id: \.self){ item in
-                    createListItems(for: item)
-                }
             })
-            .padding(.horizontal, 16)
+            .frame(
+                maxWidth: .infinity,
+                maxHeight: .infinity,
+                alignment: .top
+            )
+            .background(Color.white)
             
-        })
-        .frame(
-            maxWidth: .infinity,
-            maxHeight: .infinity,
-            alignment: .top
-        )
-        .background(Color.white)
+        } else {
+            //TODO プログレスダイアログ小さすぎない？
+            ProgressView("Loading...")
+                .progressViewStyle(.circular)
+        }
 
     }
 }
@@ -153,5 +163,5 @@ func createChanceOfRainView() -> some View {
 
 
 #Preview {
-    ContentView()
+    MainScreen()
 }
