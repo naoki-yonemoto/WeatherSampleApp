@@ -15,20 +15,29 @@ class MainScreenViewModel : ObservableObject {
     
     //KotlinでいうFlow的なやつ @Publishedで監視対象にする（Observableパターン）
     //TODO Nullableにするの嫌な感じ
-    @Published var data : WeatherResponse? = nil
-
+    @Published var response : WeatherResponse? = nil
+    
     //Loading用
     @Published var isLoading: Bool = false
     
     
-    func featchApi() async {
-        isLoading = true
-        do {
-            data = try await fetcher.getWeatherInformation(cityCode: "130010")
-        } catch {
-            print("api Error")
+    
+    func featchApi() {
+        guard response == nil else {
+            return
         }
         
-        isLoading = false
+        isLoading = true
+        Task {
+            do {
+                let result = try await fetcher.getWeatherInformation(cityCode: "130010")
+                DispatchQueue.main.async {
+                    self.response = result
+                    self.isLoading = false
+                }
+            } catch {
+                print("api Error")
+            }
+        }
     }
 }

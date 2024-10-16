@@ -34,7 +34,6 @@ class ApiRequest {
         
         guard let (data, result) =  try? await URLSession.shared.data(for: request) else {
             throw NSError(domain: "URLSession error", code: -1)
-
         }
         
         // ResponseをHTTPURLResponseにしてHTTPレスポンスヘッダを得る
@@ -43,13 +42,13 @@ class ApiRequest {
         }
         
         // BodyをStringに、失敗したらレスポンスコードを返す
-        guard let response = String(data: data, encoding: .utf8) else {
+        guard let responseStr = String(data: data, encoding: .utf8) else {
             throw NSError(domain: "\(httpStatus.statusCode)", code: -1)
         }
-        
-        
+    
         guard let weatherResponse = try? JSONDecoder().decode(WeatherResponse.self, from: data) else {
-            throw NSError(domain: response, code: -1)
+            print("json decode Error")
+            throw NSError(domain: responseStr, code: -1)
         }
         
         

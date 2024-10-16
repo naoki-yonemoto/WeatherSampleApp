@@ -18,41 +18,42 @@ import SwiftUI
 
 
 struct MainScreen: View {
-    
     @StateObject private var vm = MainScreenViewModel()
-
-    let items = ["今日の天気", "明日の天気", "明後日の天気"]
     
     var body: some View {
-        
-        if !vm.isLoading {
+        @State var loading = !vm.isLoading
+
+        if loading {
             ScrollView(content: {
                 //AndroidのLinerLayoutのようなもの(ComposeならColumn）
                 VStack(content: {
                     //TextView(自動改行つき）
-                    Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+                    Text(vm.response?.publicTimeFormatted ?? "予報発表日時")
                     //Compose modifierみたいに設定する
                         .padding(.top, 8)
                         .font(.system(size: 24))
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                                alignment: .leading)
                     
-                    Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+                    Text(vm.response?.title ?? "予報地点の場所")
                         .padding(.top, 8)
                         .font(.system(size: 16))
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                                alignment: .leading)
                     
-                    Text("Hello, World!")
+                    Text(vm.response?.description.descriptionBodyText ?? "予報概要")
                         .padding(.top, 8)
                         .font(.system(size: 16))
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                                alignment: .leading)
                     
                     
-                    ForEach(items, id: \.self){ item in
-                        createListItems(for: item)
-                    }
+//                    let items = vm.response?.forecasts ?? []
+                    //ForEachはSwiftUIで使うforEach(普通にSwiftのものとは違う専用のもの）
+                    //Identifiableに準拠させてidとなるものを付与しないといけないらしい（idはレイアウトの個別判定に利用される）
+//                    ForEach(items, id: \.self.id){ item in
+//                        createListItems(for: item)
+//                    }
                 })
                 .padding(.horizontal, 16)
                 
@@ -64,21 +65,30 @@ struct MainScreen: View {
                 alignment: .top
             )
             .background(Color.white)
-            
-        } else {
-            //TODO プログレスダイアログ小さすぎない？
-            ProgressView("Loading...")
-                .progressViewStyle(.circular)
-        }
+            .onAppear{
+                vm.featchApi()
+            }
 
+        } else {
+            ZStack {
+                ProgressView("Loading...")
+                    .progressViewStyle(.circular)
+                    .scaleEffect(1.5) // サイズを拡大（オプション）
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity)
+            }
+        }
+        
     }
 }
 
 //メソッドを分ける
-func createListItems(for item : String) -> some View {
+func createListItems(for item : WeatherForecasts) -> some View {
     VStack(content: {
-        let minTemp = String(format: "最低気温%s℃", item)
-        let maxTemp = String(format: "最高気温%s℃", item)
+        //気温
+        let minTemp = String(format: "最低気温%s℃", item.temperature.min.celsius ?? "最低気温--℃")
+        let maxTemp = String(format: "最高気温%s℃", item.temperature.max.celsius ?? "最高気温--℃")
         
         //ボーダーView
         Rectangle()
@@ -86,7 +96,8 @@ func createListItems(for item : String) -> some View {
             .foregroundColor(.black)
             .padding(.top, 4)
         
-        Text(item)
+        //
+        Text("")
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                    alignment: .leading)
             .font(.system(size: 16, weight: .bold, design: .default)) //サイズとスタイルを指定
@@ -107,7 +118,7 @@ func createListItems(for item : String) -> some View {
                 .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                        alignment: .leading)
                 .foregroundColor(.red)
-
+            
         })
         
         createChanceOfRainView()
@@ -121,7 +132,7 @@ func createChanceOfRainView() -> some View {
     
     VStack(content: {
         //TODO ForListでうまいことやりたい
-
+        
         HStack(content: {
             VStack(content: {
                 Text("深夜〜朝(0時〜6時)")
@@ -154,12 +165,15 @@ func createChanceOfRainView() -> some View {
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                    alignment: .center)
         })
-
+        
     })
+    
     .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
            alignment: .center)
     .padding(.top, 8)
 }
+
+
 
 
 #Preview {

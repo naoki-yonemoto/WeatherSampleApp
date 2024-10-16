@@ -19,9 +19,11 @@ import Foundation
  * Response OverView
  */
 struct WeatherResponse : Codable {
-    let publicTimeFormatted: String
+    let publicTimeFormatted : String
     let title: String
-    let description: String
+    let description: WeatherDescription
+//    let forecasts: [WeatherForecasts] //TODO リストの受け方がよくない？できてない様子
+    let location : WeatherLocation
 }
 
 /**
@@ -40,7 +42,8 @@ struct WeatherDescription : Codable {
 /**
  予報内容
  */
-struct WeatherForecasts: Codable {
+struct WeatherForecasts: Codable, Identifiable {
+    let id = UUID()
     let data : String
     let dataLabel: String
     let weatherLabel: String
