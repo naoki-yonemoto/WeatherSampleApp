@@ -22,8 +22,9 @@ struct WeatherResponse : Codable {
     let publicTimeFormatted : String
     let title: String
     let description: WeatherDescription
-//    let forecasts: [WeatherForecasts] //TODO リストの受け方がよくない？できてない様子
+    let forecasts: [WeatherForecasts]
     let location : WeatherLocation
+    
 }
 
 /**
@@ -42,24 +43,25 @@ struct WeatherDescription : Codable {
 /**
  予報内容
  */
-struct WeatherForecasts: Codable, Identifiable {
+struct WeatherForecasts: Codable {
     let id = UUID()
-    let data : String
-    let dataLabel: String
+    let date : String
+    let dateLabel: String
     let weatherLabel: String
     let forecastDetail: WeatherForecastDetail
     let temperature : WeatherTemperature
     let chanceOfRain: ChanceOfRain
     let iconImage: WeatherIconImage
     
+    //同じものは代入は書かなくてもいいらしい
     enum CodingKeys: String, CodingKey{
-        case data = "data"
-        case dataLabel = "dataLabel"
+        case date
+        case dateLabel
         case weatherLabel = "telop"
         case forecastDetail = "detail"
-        case temperature = "temperature"
-        case chanceOfRain = "chanceOfRain"
-        case iconImage = "iconImage"
+        case temperature
+        case chanceOfRain
+        case iconImage = "image"
     }
 }
 

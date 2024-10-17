@@ -45,9 +45,33 @@ class ApiRequest {
         guard let responseStr = String(data: data, encoding: .utf8) else {
             throw NSError(domain: "\(httpStatus.statusCode)", code: -1)
         }
+//        
+//        do {
+//            _ = try JSONDecoder().decode(WeatherResponse.self, from: data)
+//        } catch let decodingError as DecodingError {
+//            switch decodingError {
+//            case .typeMismatch(let type, let context):
+//                print("型が一致しません: \(type), コンテキスト: \(context)")
+//            case .valueNotFound(let type, let context):
+//                print("値が見つかりません: \(type), コンテキスト: \(context)")
+//            case .keyNotFound(let key, let context):
+//                print("キーが見つかりません: \(key), コンテキスト: \(context)")
+//            case .dataCorrupted(let context):
+//                print("データが壊れています: \(context)")
+//            @unknown default:
+//                print("未知のエラーが発生しました: \(decodingError)")
+//            }
+//            
+//            throw NSError(domain: responseStr, code: -1)
+//        } catch {
+//            throw NSError(domain: responseStr, code: -1)
+//        }
+        
     
         guard let weatherResponse = try? JSONDecoder().decode(WeatherResponse.self, from: data) else {
-            print("json decode Error")
+            
+            
+            print("json decode Error \n \(responseStr)")
             throw NSError(domain: responseStr, code: -1)
         }
         

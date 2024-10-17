@@ -48,12 +48,12 @@ struct MainScreen: View {
                                alignment: .leading)
                     
                     
-//                    let items = vm.response?.forecasts ?? []
+                    let items = vm.response?.forecasts ?? []
                     //ForEachはSwiftUIで使うforEach(普通にSwiftのものとは違う専用のもの）
                     //Identifiableに準拠させてidとなるものを付与しないといけないらしい（idはレイアウトの個別判定に利用される）
-//                    ForEach(items, id: \.self.id){ item in
-//                        createListItems(for: item)
-//                    }
+                    ForEach(items, id: \.self.id){ item in
+                        createListItems(for: item)
+                    }
                 })
                 .padding(.horizontal, 16)
                 
@@ -87,8 +87,8 @@ struct MainScreen: View {
 func createListItems(for item : WeatherForecasts) -> some View {
     VStack(content: {
         //気温
-        let minTemp = String(format: "最低気温%s℃", item.temperature.min.celsius ?? "最低気温--℃")
-        let maxTemp = String(format: "最高気温%s℃", item.temperature.max.celsius ?? "最高気温--℃")
+        let minTemp = String(format: "最低気温%@℃", item.temperature.min.celsius ?? "--")
+        let maxTemp = String(format: "最高気温%@℃", item.temperature.max.celsius ?? "--")
         
         //ボーダーView
         Rectangle()
@@ -96,14 +96,17 @@ func createListItems(for item : WeatherForecasts) -> some View {
             .foregroundColor(.black)
             .padding(.top, 4)
         
-        //
-        Text("")
+        //TODO ここに画像を置く（SVG
+        //今日・明日・明後日
+        let dateLabel = String(format: "%@の天気", item.dateLabel)
+        Text(dateLabel)
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                    alignment: .leading)
             .font(.system(size: 16, weight: .bold, design: .default)) //サイズとスタイルを指定
             .padding(.top, 8)
+            .padding(.bottom, 8)
         
-        Text("晴れのち曇り")
+        Text(item.weatherLabel)
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                    alignment: .leading)
             .font(.system(size: 20, weight: .bold, design: .default))
@@ -121,29 +124,28 @@ func createListItems(for item : WeatherForecasts) -> some View {
             
         })
         
-        createChanceOfRainView()
+        createChanceOfRainView(chanceOfRain : item.chanceOfRain)
         
         
     })
     
 }
 
-func createChanceOfRainView() -> some View {
+func createChanceOfRainView(chanceOfRain : ChanceOfRain) -> some View {
     
     VStack(content: {
         //TODO ForListでうまいことやりたい
-        
         HStack(content: {
             VStack(content: {
                 Text("深夜〜朝(0時〜6時)")
-                Text("--%")
+                Text(chanceOfRain.lateNight)
             })
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                    alignment: .center)
             
             VStack(content: {
                 Text("朝〜昼(6時〜12時)")
-                Text("--%")
+                Text(chanceOfRain.morning)
             })
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                    alignment: .center)
@@ -153,14 +155,14 @@ func createChanceOfRainView() -> some View {
         HStack(content: {
             VStack(content: {
                 Text("昼〜夕方(12時〜18時)")
-                Text("--%")
+                Text(chanceOfRain.afternoon)
             })
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                    alignment: .center)
             
             VStack(content: {
                 Text("夕方〜夜(18時〜24時)")
-                Text("--%")
+                Text(chanceOfRain.night)
             })
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                    alignment: .center)
