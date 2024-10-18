@@ -66,6 +66,7 @@ struct MainScreen: View {
             )
             .background(Color.white)
             .onAppear{
+                //表示するときにコールされる
                 vm.featchApi()
             }
 
@@ -85,6 +86,7 @@ struct MainScreen: View {
 
 //メソッドを分ける
 func createListItems(for item : WeatherForecasts) -> some View {
+    
     VStack(content: {
         //気温
         let minTemp = String(format: "最低気温%@℃", item.temperature.min.celsius ?? "--")
@@ -96,7 +98,6 @@ func createListItems(for item : WeatherForecasts) -> some View {
             .foregroundColor(.black)
             .padding(.top, 4)
         
-        //TODO ここに画像を置く（SVG
         //今日・明日・明後日
         let dateLabel = String(format: "%@の天気", item.dateLabel)
         Text(dateLabel)
@@ -106,11 +107,37 @@ func createListItems(for item : WeatherForecasts) -> some View {
             .padding(.top, 8)
             .padding(.bottom, 8)
         
-        Text(item.weatherLabel)
-            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
-                   alignment: .leading)
-            .font(.system(size: 20, weight: .bold, design: .default))
-            .foregroundColor(.orange)
+        //SVGの読み込みがうまくいかなかったので保留
+        HStack(content: {
+            let imageUrl = URL(string: item.iconImage.url)
+            AsyncImage(url: imageUrl){ phase in
+                switch phase {
+                case .empty:
+                    // 読み込み中のプレースホルダー
+                    ProgressView()
+                case .success(let image):
+                    // 読み込みに成功した場合、画像を表示
+                    image.resizable()
+                        .scaledToFit()
+                case .failure(_):
+                    // 読み込み失敗時のプレースホルダー
+                    Image(systemName: "exclamationmark")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.red)
+                @unknown default:
+                    EmptyView()
+                }
+            }.frame(width: 20, height: 20)
+            
+            Text(item.weatherLabel)
+                .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
+                       alignment: .leading)
+                .font(.system(size: 20, weight: .bold, design: .default))
+                .foregroundColor(.orange)
+        })
+        
+
         
         HStack(content: {
             Text(minTemp)
@@ -174,8 +201,6 @@ func createChanceOfRainView(chanceOfRain : ChanceOfRain) -> some View {
            alignment: .center)
     .padding(.top, 8)
 }
-
-
 
 
 #Preview {
