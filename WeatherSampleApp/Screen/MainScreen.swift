@@ -109,26 +109,26 @@ func createListItems(for item : WeatherForecasts) -> some View {
         
         //SVGの読み込みがうまくいかなかったので保留
         HStack(content: {
-            let imageUrl = URL(string: item.iconImage.url)
-            AsyncImage(url: imageUrl){ phase in
-                switch phase {
-                case .empty:
-                    // 読み込み中のプレースホルダー
-                    ProgressView()
-                case .success(let image):
-                    // 読み込みに成功した場合、画像を表示
-                    image.resizable()
-                        .scaledToFit()
-                case .failure(_):
-                    // 読み込み失敗時のプレースホルダー
-                    Image(systemName: "exclamationmark")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundColor(.red)
-                @unknown default:
-                    EmptyView()
-                }
-            }.frame(width: 20, height: 20)
+//            let imageUrl = URL(string: item.iconImage.url)
+//            AsyncImage(url: imageUrl){ phase in
+//                switch phase {
+//                case .empty:
+//                    // 読み込み中のプレースホルダー
+//                    ProgressView()
+//                case .success(let image):
+//                    // 読み込みに成功した場合、画像を表示
+//                    image.resizable()
+//                        .scaledToFit()
+//                case .failure(_):
+//                    // 読み込み失敗時のプレースホルダー
+//                    Image(systemName: "exclamationmark")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .foregroundColor(.red)
+//                @unknown default:
+//                    EmptyView()
+//                }
+//            }.frame(width: 20, height: 20)
             
             Text(item.weatherLabel)
                 .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
