@@ -23,9 +23,10 @@ struct MainScreen: View {
 }
 
 大枠のコンポーネントを開始する
-個別のコンポーネント
+個別のコンポーネントもメソッド別に作成可能
+Composeと同じように使いまわしたり、小分けにして可読性を上げたりするのは同じ概念
 
-
+## View周り
 
 ## コンテンツを表示するためのパーツ比較（よく使いそうなの
 SwiftUI | Compose
@@ -77,4 +78,29 @@ ViewModel(それに類するもの)に置いておいたものに変更を検知
 →変更のトリガーとして使う
 →Composeで言うところのremember / StateFlow & collectAsState
 
+ViewModelに通信処理などのメソッドを置いたりするのはAndroidのMVVMの考え方とほぼ同じ
+もちろんMVVM以外の構造もある
 
+
+## Repositry（通信）周り
+
+### Jsonを受け取るためのクラス（Responseクラス）
+structクラスで作る（構造体クラス）でDataClass みたいなもの
+
+レスポンスを受け取るためにCodableプロトコルを準拠させる。（Json構造の文字列のパースに必要）
+JsonのKey名とクラス内の変数を別にしたい場合
+enum CodingKeys: String, CodingKey
+を作ってKeyと変数を結びつけることができる。
+
+### HTTPS通信を行う
+URLSessionを使って通信をする
+GET/POSTなどのプロトコルを使う場合はURLComponentsを使って通信する（クエリなどもここで一緒に作る）
+
+通信はバックグラウンド通信なので async / awaitで非同期処理を行って実行する
+エラーハンドリングのために try await...のような形でリクエストする。
+
+Data型で受け取るのでこのDataをResponseクラスでパースする場合は
+JSONDecoder()でResponseクラスでパースする。
+（アプリ内で用意されてない変数は基本的に無視）
+
+最終的に上のレスポンスクラスをそのまま返して通信処理終了
