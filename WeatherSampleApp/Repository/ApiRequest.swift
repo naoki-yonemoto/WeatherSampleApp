@@ -75,7 +75,7 @@ class ApiRequest {
             throw NSError(domain: responseStr, code: -1)
         }
         
-        
+        print("Api request Success")
         return weatherResponse
     }
     

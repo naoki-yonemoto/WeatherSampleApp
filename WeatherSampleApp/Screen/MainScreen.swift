@@ -21,9 +21,7 @@ struct MainScreen: View {
     @StateObject private var vm = MainScreenViewModel()
     
     var body: some View {
-        @State var loading = !vm.isLoading
-
-        if loading {
+        if !vm.isLoading {
             ScrollView(content: {
                 //AndroidのLinerLayoutのようなもの(ComposeならColumn）
                 VStack(content: {
@@ -35,11 +33,23 @@ struct MainScreen: View {
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
                                alignment: .leading)
                     
-                    Text(vm.response?.title ?? "予報地点の場所")
-                        .padding(.top, 8)
-                        .font(.system(size: 16))
-                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
-                               alignment: .leading)
+                    HStack(content: {
+                        Text(vm.response?.title ?? "予報地点の場所")
+                            .padding(.top, 8)
+                            .font(.system(size: 16))
+                            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/,
+                                   alignment: .leading
+                            )
+                        
+                        Menu("他の場所を選択する"){
+                            Button("東京") { vm.featchApi(cityCode: "130010") }
+                            Button("名古屋")  { vm.featchApi(cityCode: "230010") }
+                            Button("大阪")  { vm.featchApi(cityCode: "270000") }
+                        }
+                    }).frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .top)
                     
                     Text(vm.response?.description.descriptionBodyText ?? "予報概要")
                         .padding(.top, 8)
@@ -67,7 +77,7 @@ struct MainScreen: View {
             .background(Color.white)
             .onAppear{
                 //表示するときにコールされる
-                vm.featchApi()
+                vm.initFeatchApi()
             }
 
         } else {

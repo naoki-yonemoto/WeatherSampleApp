@@ -20,17 +20,19 @@ class MainScreenViewModel : ObservableObject {
     //Loading用
     @Published var isLoading: Bool = false
     
-    
-    
-    func featchApi() {
+    func initFeatchApi(){
         guard response == nil else {
             return
         }
-        
+        featchApi(cityCode: "130010") //東京
+    }
+    
+    func featchApi(cityCode: String) {
         isLoading = true
         Task {
+//            sleep(2) ローディングView確認用
             do {
-                let result = try await fetcher.getWeatherInformation(cityCode: "130010")
+                let result = try await fetcher.getWeatherInformation(cityCode: cityCode)
                 DispatchQueue.main.async {
                     self.response = result
                     self.isLoading = false
